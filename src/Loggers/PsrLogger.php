@@ -14,10 +14,10 @@ class PsrLogger implements LoggerInterface
     protected bool $logPiiData;
     protected ?EncryptionHandler $encryptionHandler;
 
-    public function __construct(PsrLoggerInterface $logger, bool $logPiiData = false, EncryptionHandler $encryptionHandler = null)
+    public function __construct(EncryptionHandler $encryptionHandler, PsrLoggerInterface $logger, bool $logPiiData = false)
     {
-        $this->logger = $logger;
         $this->encryptionHandler = $encryptionHandler;
+        $this->logger = $logger;
         $this->logPiiData = $logPiiData;
     }
 
@@ -26,7 +26,7 @@ class PsrLogger implements LoggerInterface
         $data = ($this->logPiiData) ? $event->getMergedPiiData() : $event->getLogData();
 
         $data = json_encode($data, JSON_THROW_ON_ERROR);
-        if ($this->encryptionHandler !== null) {
+        if ($this->encryptionHandler->isEnabled()) {
             $data = $this->encryptionHandler->encrypt($data);
         }
 

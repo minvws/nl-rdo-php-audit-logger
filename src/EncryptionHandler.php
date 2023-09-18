@@ -6,19 +6,25 @@ namespace MinVWS\AuditLogger;
 
 class EncryptionHandler
 {
+    protected bool $enabled;
     protected string $publicKey;
+    #[\SensitiveParameter]
     protected string $privateKey;
 
-    public function __construct(string $publicKey, string $privateKey)
+    public function __construct(bool $enabled, string $publicKey, #[\SensitiveParameter] string $privateKey)
     {
-        if (!function_exists('sodium_crypto_box')) {
-            throw new \Exception(
-                "libsodium cound not found. Please install libsodium or do not use encryption in the audit_logger"
-            );
+        if (! function_exists('sodium_crypto_box')) {
+            throw new \Exception('libsodium cound not found. Please install libsodium or do not use encryption in the audit_logger');
         }
 
+        $this->enabled = $enabled;
         $this->publicKey = base64_decode($publicKey);
         $this->privateKey = base64_decode($privateKey);
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
     }
 
     public function encrypt(mixed $data): string
