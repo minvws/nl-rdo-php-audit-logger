@@ -13,10 +13,10 @@ class FileLogger implements LoggerInterface
     protected bool $logPiiData;
     protected ?EncryptionHandler $encryptionHandler;
 
-    public function __construct(string $auditLogFilePath, bool $logPiiData = false, EncryptionHandler $encryptionHandler = null)
+    public function __construct(EncryptionHandler $encryptionHandler, string $auditLogFilePath, bool $logPiiData = false)
     {
-        $this->auditLogFilePath = $auditLogFilePath;
         $this->encryptionHandler = $encryptionHandler;
+        $this->auditLogFilePath = $auditLogFilePath;
         $this->logPiiData = $logPiiData;
     }
 
@@ -24,9 +24,9 @@ class FileLogger implements LoggerInterface
     {
         $data = ($this->logPiiData) ? $event->getMergedPiiData() : $event->getLogData();
         $data = json_encode($data, JSON_THROW_ON_ERROR);
-
-        if ($this->encryptionHandler !== null) {
+        if ($this->encryptionHandler->isEnabled()) {
             $data = $this->encryptionHandler->encrypt($data);
+            $data = json_encode(['encrypted' => $data], JSON_THROW_ON_ERROR);
         }
 
         file_put_contents($this->auditLogFilePath, $data . "\n", FILE_APPEND);
