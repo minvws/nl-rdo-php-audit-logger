@@ -8,7 +8,6 @@ class EncryptionHandler
 {
     protected bool $enabled;
     protected string $publicKey;
-    #[\SensitiveParameter]
     protected string $privateKey;
 
     public function __construct(bool $enabled, string $publicKey, #[\SensitiveParameter] string $privateKey)
