@@ -48,9 +48,9 @@ has the private key.
 To generate a new keypair, use the following code:
 
 ```php
-$kp = sodium_crypto_sign_keypair();
-$pubkey = sodium_crypto_sign_publickey($kp);
-$privkey = sodium_crypto_sign_secretkey($kp);
+$kp = sodium_crypto_box_keypair();
+$pubkey = sodium_crypto_box_publickey($kp);
+$privkey = sodium_crypto_box_secretkey($kp);
 
 echo "Public key: " . base64_encode($pubkey) . "\n";
 echo "Private key: " . base64_encode($privkey) . "\n";
