@@ -8,23 +8,23 @@ use MinVWS\AuditLogger\Contracts\LoggableUser;
 
 class User implements LoggableUser
 {
-    public function getId(): string
+    public function getAuditId(): string
     {
-        return "12345";
+        return '12345';
     }
 
     public function getName(): string
     {
-        return "john doe";
+        return 'john doe';
     }
 
     public function getRoles(): array
     {
-        return ["ROLE_USER"];
+        return ['ROLE_USER'];
     }
 
     public function getEmail(): string
     {
-        return "john@example.org";
+        return 'john@example.org';
     }
 }
