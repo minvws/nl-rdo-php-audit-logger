@@ -14,11 +14,11 @@ class GeneralLogEventTest extends TestCase
         $data = [
             'field_1' => 12,
             'old' => [
-                'feature' => [ 'foo', 'bar', 'baz' ],
+                'feature' => ['foo', 'bar', 'baz'],
             ],
             'new' => [
-                'feature' => [ 'foo', 'bar' ],
-            ]
+                'feature' => ['foo', 'bar'],
+            ],
         ];
 
         $piiData = [
@@ -28,7 +28,7 @@ class GeneralLogEventTest extends TestCase
             ],
             'new' => [
                 'name' => 'billy',
-            ]
+            ],
         ];
 
         $event = (new RegistrationLogEvent())->withData($data)->withPiiData($piiData);
@@ -37,13 +37,13 @@ class GeneralLogEventTest extends TestCase
             'field_1' => 12,
             'field_2' => 34,
             'old' => [
-                'feature' => [ 'foo', 'bar', 'baz' ],
+                'feature' => ['foo', 'bar', 'baz'],
                 'name' => 'john',
             ],
             'new' => [
-                'feature' => [ 'foo', 'bar' ],
+                'feature' => ['foo', 'bar'],
                 'name' => 'billy',
-            ]
+            ],
         ];
         $this->assertEquals($result, $event->getMergedPiiData()['request']);
     }

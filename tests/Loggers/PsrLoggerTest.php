@@ -14,12 +14,11 @@ class PsrLoggerTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 {
     public function testPsrloggerWithoutEncryption(): void
     {
-        $mockLogger = Mockery::mock(Logger::class);
+        $mockLogger = \Mockery::mock(Logger::class);
         $mockLogger->shouldReceive('info')->once()->withArgs(function ($args) {
-
             $this->assertStringStartsWith('AuditLog: ', $args);
 
-            $parts = explode(" ", $args, 2);
+            $parts = explode(' ', $args, 2);
             $this->assertCount(2, $parts);
 
             $msg = base64_decode($parts[1], true);
@@ -40,7 +39,7 @@ class PsrLoggerTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         });
 
         $user = new User();
-        $user->email = "john@example.org";
+        $user->email = 'john@example.org';
         $user->id = '12345';
 
         $event = (new UserLoginLogEvent())
@@ -66,11 +65,11 @@ class PsrLoggerTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $publicKey2 = sodium_crypto_box_publickey($keyPair2);
         $privateKey2 = sodium_crypto_box_secretkey($keyPair2);
 
-        $mockLogger = Mockery::mock(Logger::class);
+        $mockLogger = \Mockery::mock(Logger::class);
         $mockLogger->shouldReceive('info')->once()->withArgs(function ($args) use ($privateKey2, $publicKey1) {
             $this->assertStringStartsWith('AuditLog: ', $args);
 
-            $parts = explode(" ", $args, 2);
+            $parts = explode(' ', $args, 2);
             $this->assertCount(2, $parts);
 
             $box = base64_decode($parts[1]);
@@ -95,7 +94,7 @@ class PsrLoggerTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         });
 
         $user = new User();
-        $user->email = "john@example.org";
+        $user->email = 'john@example.org';
         $user->id = '12345';
 
         $event = (new UserLoginLogEvent())

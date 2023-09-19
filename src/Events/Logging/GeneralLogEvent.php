@@ -19,8 +19,8 @@ abstract class GeneralLogEvent implements LogEventInterface
     public const EVENT_CODE = '0000000';
     public const EVENT_KEY = 'log';
 
-    # Fields which will be removed from the request data
-    public const PRIVATE_FIELDS = [ "_token", "token", "code", "password", "secret" ];
+    // Fields which will be removed from the request data
+    public const PRIVATE_FIELDS = ['_token', 'token', 'code', 'password', 'secret'];
 
     // Fields
     public ?LoggableUser $actor = null;
@@ -45,66 +45,77 @@ abstract class GeneralLogEvent implements LogEventInterface
     public function withActor(LoggableUser $actor): self
     {
         $this->actor = $actor;
+
         return $this;
     }
 
     public function withTarget(LoggableUser $target): self
     {
         $this->target = $target;
+
         return $this;
     }
 
     public function withData(array $data = []): self
     {
         $this->data = $data;
+
         return $this;
     }
 
     public function withPiiData(array $piiData = []): self
     {
         $this->piiData = $piiData;
+
         return $this;
     }
 
     public function withEventCode(string $eventCode): self
     {
         $this->eventCode = $eventCode;
+
         return $this;
     }
 
     public function asCreate(): self
     {
         $this->actionCode = self::AC_CREATE;
+
         return $this;
     }
 
     public function asUpdate(): self
     {
         $this->actionCode = self::AC_UPDATE;
+
         return $this;
     }
 
     public function asExecute(): self
     {
         $this->actionCode = self::AC_EXECUTE;
+
         return $this;
     }
 
     public function asRead(): self
     {
         $this->actionCode = self::AC_READ;
+
         return $this;
     }
 
     public function asDelete(): self
     {
         $this->actionCode = self::AC_DELETE;
+
         return $this;
     }
 
     public function withAllowedAdminView(bool $allowedAdminView): self
     {
         $this->allowedAdminView = $allowedAdminView;
+
         return $this;
     }
 
@@ -112,25 +123,28 @@ abstract class GeneralLogEvent implements LogEventInterface
     {
         $this->failed = $failed;
         $this->failedReason = $failedReason;
+
         return $this;
     }
 
     public function withSource(string $source): self
     {
         $this->source = $source;
+
         return $this;
     }
 
     public function logFullRequest(bool $logFullRequest): self
     {
         $this->logFullRequest = $logFullRequest;
+
         return $this;
     }
 
     public function getLogData(): array
     {
         return [
-            'user_id' => $this->actor?->getId(),
+            'user_id' => $this->actor?->getAuditId(),
             'request' => $this->data,
             'created_at' => new \DateTimeImmutable(),
             'event_code' => $this->eventCode,
@@ -152,10 +166,10 @@ abstract class GeneralLogEvent implements LogEventInterface
             $data['name'] = $this->actor?->getName();
             $data['roles'] = $this->actor?->getRoles();
 
-            # Remove private fields from the request data, if found
+            // Remove private fields from the request data, if found
             foreach (self::PRIVATE_FIELDS as $field) {
                 if (isset($data['http_request'][$field])) {
-                    $data['http_request'][$field] = "***";
+                    $data['http_request'][$field] = '***';
                 }
             }
         }

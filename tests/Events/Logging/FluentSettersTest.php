@@ -6,15 +6,14 @@ namespace MinVWS\AuditLogger\Tests\Events\Logging;
 
 use MinVWS\AuditLogger\Contracts\LoggableUser;
 use MinVWS\AuditLogger\Events\Logging\AdminPasswordResetLogEvent;
-use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class FluentSettersTest extends TestCase
 {
     public function testFluentSetters()
     {
-        $actor = Mockery::mock(LoggableUser::class);
-        $actor->expects('getId')->andReturns("1234")->zeroOrMoreTimes();
+        $actor = \Mockery::mock(LoggableUser::class);
+        $actor->expects('getId')->andReturns('1234')->zeroOrMoreTimes();
 
         $event = (new AdminPasswordResetLogEvent())
             ->asCreate()

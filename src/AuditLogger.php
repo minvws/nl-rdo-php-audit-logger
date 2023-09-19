@@ -30,7 +30,7 @@ class AuditLogger
     public function log(LogEventInterface $event): void
     {
         foreach ($this->loggers as $logger) {
-            if (!$logger->canHandleEvent($event)) {
+            if (! $logger->canHandleEvent($event)) {
                 continue;
             }
 
