@@ -8,14 +8,17 @@ use MinVWS\AuditLogger\EncryptionHandler;
 use MinVWS\AuditLogger\Events\Logging\GeneralLogEvent;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 
-class PsrLogger implements LoggerInterface
+final class PsrLogger implements LoggerInterface
 {
     protected PsrLoggerInterface $logger;
     protected bool $logPiiData;
-    protected ?EncryptionHandler $encryptionHandler;
+    protected EncryptionHandler $encryptionHandler;
 
-    public function __construct(EncryptionHandler $encryptionHandler, PsrLoggerInterface $logger, bool $logPiiData = false)
-    {
+    public function __construct(
+        EncryptionHandler $encryptionHandler,
+        PsrLoggerInterface $logger,
+        bool $logPiiData = false,
+    ) {
         $this->encryptionHandler = $encryptionHandler;
         $this->logger = $logger;
         $this->logPiiData = $logPiiData;
@@ -23,7 +26,7 @@ class PsrLogger implements LoggerInterface
 
     public function log(LogEventInterface $event): void
     {
-        $data = ($this->logPiiData) ? $event->getMergedPiiData() : $event->getLogData();
+        $data = $this->logPiiData ? $event->getMergedPiiData() : $event->getLogData();
 
         $data = json_encode($data, JSON_THROW_ON_ERROR);
         if ($this->encryptionHandler->isEnabled()) {

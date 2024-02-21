@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MinVWS\AuditLogger\Events\Logging;
 
-class AccountChangeLogEvent extends GeneralLogEvent
+final class AccountChangeLogEvent extends GeneralLogEvent
 {
     public const EVENT_CODE = '090001';
     public const EVENT_KEY = 'account_change';

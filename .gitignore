@@ -1,3 +1,12 @@
 composer.lock
 vendor
-.phpunit.result.cache
+
+.phpunit.cache
+.phpcs-cache
+.phplint.cache
+# for the older version of phplint:
+.phplint-cache
+.phpstan.cache
+
+phpcs.xml
+phpunit.xml

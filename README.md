@@ -9,7 +9,7 @@ to identify a person. Depending on the logging destination, it can send the PII 
 Data can be automatically encrypted with a pub/priv keypair so that logging can be
 written, but not directly read.
 
-This package is a generic module that isn't directly coupled to a framework, however, there 
+This package is a generic module that isn't directly coupled to a framework, however, there
 are other packages that provide a framework specific implementation.
 
 ## Installation
@@ -21,25 +21,26 @@ enable the repository in your `composer.json` file:
 
 ```json
 {
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "git@github.com:minvws/nl-rdo-audit-logger.git"
+    "repositories": {
+        "minvws/audit-logger": {
+            "type": "vcs",
+            "url": "git@github.com:minvws/nl-rdo-php-audit-logger.git"
+        }
     }
-  ]
+}
 ```
 
 After that, you can install the package:
 
 ```bash
-$ composer require minvws/audit-logger
+composer require minvws/audit-logger
 ```
 
 ### Configuration
 
 #### PSR logging
 
-With the PSRLogger you can log through any PSR compatible logger. This makes it easy to 
+With the PSRLogger you can log through any PSR compatible logger. This makes it easy to
 log to any destination like syslog, or monolog.
 
 Audit lines can optionally be encrypted so they can only be read by the application that
@@ -65,7 +66,7 @@ all sensitive information will be stripped if the naming is different.
 However, this configuration option is NOT implemented. You MUST call `logFullRequest()` on the event
 in order to log the full request.
 
-### Usage:
+### Usage
 
 To use the logger, inject or resolve the `LogService` class. This class has a single method:
 
@@ -112,7 +113,7 @@ event class, but it can be overridden.
 
 `->logFullRequest` can be used to log the full HTTP request. Any sensitive information like passsords, tokens etc will be stripped from the request.
 
-# Events
+## Events
 
 Each event has a unique event code. This code is used to identify the event and can be used to filter events in your logs. For rabbitMQ logging,
 each event will have a unique routing key that can be used to route events to different queues.
@@ -150,9 +151,9 @@ each event will have a unique routing key that can be used to route events to di
 
 [^1]: This event is used for all account changes. The event code is used to identify the type of change. Set this with the `->withEventCode()` method.
 
-## Creating custom events
+### Creating custom events
 
-Creating a custom event is easy. You can create a new class that extends the `GeneralLogEvent` class. 
+Creating a custom event is easy. You can create a new class that extends the `GeneralLogEvent` class.
 
 ```php
 

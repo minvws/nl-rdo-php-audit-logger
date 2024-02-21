@@ -6,7 +6,7 @@ namespace MinVWS\AuditLogger;
 
 use MinVWS\AuditLogger\Contracts\LoggableUser;
 
-class AuditUser implements LoggableUser
+final class AuditUser implements LoggableUser
 {
     protected string $id;
     protected string $name;
