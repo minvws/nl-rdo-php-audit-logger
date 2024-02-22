@@ -1,58 +1,79 @@
 {
-  "name": "minvws/audit-logger",
-  "description": "Generic audit logger",
-  "keywords": [
-    "audit",
-    "logging"
-  ],
-  "type": "library",
-  "license": "EUPL",
-  "authors": [
-    {
-      "name": "Rick Lambrechts",
-      "email": "rick@rl-webdiensten.nl"
+    "name": "minvws/audit-logger",
+    "description": "Generic audit logger",
+    "keywords": [
+        "audit",
+        "logging"
+    ],
+    "type": "library",
+    "license": "EUPL",
+    "require": {
+        "php": "^8.1",
+        "nesbot/carbon": "^2.70 | ^3.0",
+        "psr/log": "^3.0",
+        "symfony/http-foundation": "^6.0 | ^7.0"
     },
-    {
-      "name": "Joshua Thijssen",
-      "email": "jthijssen@noxlogic.nl"
-    }
-  ],
-  "require": {
-    "php": "^8.0",
-    "nesbot/carbon": "^2.66"
-  },
-  "require-dev": {
-    "orchestra/testbench": "^6.0",
-    "phpunit/phpunit": "^9.5",
-    "vimeo/psalm": "^4.23 || ^5.0",
-    "phpstan/phpstan": "^1.7",
-    "squizlabs/php_codesniffer": "^3.6",
-    "mockery/mockery": "^1.4.3"
-  },
-  "autoload": {
-    "psr-4": {
-      "MinVWS\\AuditLogger\\": "src/"
+    "require-dev": {
+        "dg/bypass-finals": "^1.6",
+        "mockery/mockery": "^1.6.7",
+        "overtrue/phplint": "^5.5 | ^9.1",
+        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan-mockery": "^1.1",
+        "phpstan/phpstan-strict-rules": "^1.5",
+        "phpunit/phpunit": "^10.2",
+        "slevomat/coding-standard": "^8.14",
+        "spatie/phpunit-snapshot-assertions": "^5.1",
+        "squizlabs/php_codesniffer": "^3.8",
+        "symfony/var-dumper": "^6.0 | ^7.0"
     },
-    "classmap": [
-      "src/"
-    ]
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "MinVWS\\AuditLogger\\Tests\\": "tests/"
-    }
-  },
-  "scripts": {
-    "test": [
-        "vendor/bin/phpcs",
-        "vendor/bin/phpunit",
-        "vendor/bin/phpstan analyse",
-        "vendor/bin/psalm"
-    ]
-  },
-  "config": {
-    "allow-plugins": {
-      "composer/package-versions-deprecated": true
-    }
-  }
+    "autoload": {
+        "psr-4": {
+            "MinVWS\\AuditLogger\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MinVWS\\AuditLogger\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "lint": "XDEBUG_MODE=off phplint --exclude=vendor .",
+        "checkstyle": "XDEBUG_MODE=off phpcs",
+        "fixstyle": "XDEBUG_MODE=off phpcbf",
+        "checktype": "XDEBUG_MODE=off phpstan analyse",
+        "update-type-baseline": "XDEBUG_MODE=off phpstan --generate-baseline",
+        "test": "XDEBUG_MODE=off phpunit -d --without-creating-snapshots",
+        "test-report": "XDEBUG_MODE=coverage phpunit --coverage-text --coverage-html coverage/html",
+        "update-test-snapshots": "XDEBUG_MODE=off phpunit -d --update-snapshots",
+        "checkall": [
+            "@lint",
+            "@checkstyle",
+            "@checktype",
+            "@test"
+        ]
+    },
+    "scripts-descriptions": {
+        "lint": "Lint PHP files",
+        "checkstyle": "Check code style using php_codesniffer",
+        "fixstyle": "Fix code style using php_codesniffer",
+        "checktype": "Check code type using PHPStan",
+        "update-type-baseline": "Update PHPStan baseline",
+        "test": "Run PHPUnit tests",
+        "test-report": "Run PHPUnit tests with coverage report",
+        "update-test-snapshots": "Update PHPUnit snapshots",
+        "checkall": "Run all checks including test"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.0-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

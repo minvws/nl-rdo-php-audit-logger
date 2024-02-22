@@ -15,7 +15,9 @@ interface LoggableUser
 
     public function getName(): string;
 
-    /** @return string[] */
+    /**
+     * @return array<array-key,string>
+     */
     public function getRoles(): array;
 
     public function getEmail(): string;

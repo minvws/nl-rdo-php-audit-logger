@@ -4,57 +4,57 @@ declare(strict_types=1);
 
 namespace MinVWS\AuditLogger\Tests\Loggers;
 
-use Illuminate\Log\Logger;
+use Carbon\CarbonImmutable;
+use MinVWS\AuditLogger\EncryptionHandler;
 use MinVWS\AuditLogger\Events\Logging\UserLoginLogEvent;
 use MinVWS\AuditLogger\Loggers\PsrLogger;
-use MinVWS\AuditLogger\Tests\User;
+use MinVWS\AuditLogger\Tests\StubUser;
+use MinVWS\AuditLogger\Tests\TestCase;
 use Mockery;
+use Psr\Log\LoggerInterface;
 
-class PsrLoggerTest extends Mockery\Adapter\Phpunit\MockeryTestCase
+final class PsrLoggerTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2021-01-01 12:00:00'));
+    }
+
     public function testPsrloggerWithoutEncryption(): void
     {
-        $mockLogger = \Mockery::mock(Logger::class);
-        $mockLogger->shouldReceive('info')->once()->withArgs(function ($args) {
-            $this->assertStringStartsWith('AuditLog: ', $args);
+        $encryptionHandler = Mockery::mock(EncryptionHandler::class);
+        $encryptionHandler->shouldReceive('isEnabled')->andReturn(false);
 
-            $parts = explode(' ', $args, 2);
-            $this->assertCount(2, $parts);
+        $mockLogger = Mockery::mock(LoggerInterface::class);
+        $mockLogger->shouldReceive('info')->once()->withArgs(function ($message) {
+            self::assertStringStartsWith('AuditLog: ', $message);
 
-            $msg = base64_decode($parts[1], true);
-            $this->assertNotFalse($msg);
+            $parts = explode(' ', $message, 2);
+            self::assertCount(2, $parts);
 
-            $data = json_decode($msg, true, 512, JSON_THROW_ON_ERROR);
-            $this->assertIsArray($data);
+            $json = json_decode($parts[1], true, 512, JSON_THROW_ON_ERROR);
+            self::assertIsArray($json);
 
-            $this->assertEquals(UserLoginLogEvent::EVENT_CODE, $data['event_code']);
-            $this->assertArrayHasKey('foo', $data['request']);
-            $this->assertArrayHasKey('bar', $data['request']);
+            self::assertMatchesJsonSnapshot($json);
 
-            $this->assertEquals('12345', $data['user_id']);
-            $this->assertEquals('john@example.org', $data['email']);
-
-            // Should return a json base64 encoded string
             return true;
         });
 
-        $user = new User();
-        $user->email = 'john@example.org';
-        $user->id = '12345';
-
         $event = (new UserLoginLogEvent())
-            ->withActor($user)
+            ->withActor(new StubUser())
             ->withData(['foo' => 'bar'])
             ->withPiiData(['bar' => 'baz']);
 
-        $service = new PsrLogger($mockLogger, false, '', '');
+        $service = new PsrLogger($encryptionHandler, $mockLogger);
         $service->log($event);
     }
 
     public function testPsrloggerWithEncryption(): void
     {
         if (! function_exists('sodium_crypto_box_keypair')) {
-            $this->markTestSkipped('No sodium detected');
+            self::markTestSkipped('No sodium detected');
         }
 
         $keyPair1 = sodium_crypto_box_keypair();
@@ -65,44 +65,38 @@ class PsrLoggerTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $publicKey2 = sodium_crypto_box_publickey($keyPair2);
         $privateKey2 = sodium_crypto_box_secretkey($keyPair2);
 
-        $mockLogger = \Mockery::mock(Logger::class);
-        $mockLogger->shouldReceive('info')->once()->withArgs(function ($args) use ($privateKey2, $publicKey1) {
-            $this->assertStringStartsWith('AuditLog: ', $args);
+        $encryptionHandler = new EncryptionHandler(true, base64_encode($publicKey2), base64_encode($privateKey1));
 
-            $parts = explode(' ', $args, 2);
-            $this->assertCount(2, $parts);
+        $mockLogger = Mockery::mock(LoggerInterface::class);
+        $mockLogger->shouldReceive('info')->once()->withArgs(function ($message) use ($privateKey2, $publicKey1) {
+            self::assertStringStartsWith('AuditLog: ', $message);
 
-            $box = base64_decode($parts[1]);
+            $parts = explode(' ', $message, 2);
+            self::assertCount(2, $parts);
+
+            $box = base64_decode($parts[1], true);
+            self::assertNotFalse($box);
             $nonce = substr($box, 0, SODIUM_CRYPTO_BOX_NONCEBYTES);
             $cipher = substr($box, SODIUM_CRYPTO_BOX_NONCEBYTES);
 
             $pair = sodium_crypto_box_keypair_from_secretkey_and_publickey($privateKey2, $publicKey1);
             $msg = sodium_crypto_box_open($cipher, $nonce, $pair);
+            self::assertNotFalse($msg);
 
             $data = json_decode($msg, true, 512, JSON_THROW_ON_ERROR);
-            $this->assertIsArray($data);
+            self::assertIsArray($data);
 
-            $this->assertEquals(UserLoginLogEvent::EVENT_CODE, $data['event_code']);
-            $this->assertArrayHasKey('foo', $data['request']);
-            $this->assertArrayHasKey('bar', $data['request']);
+            self::assertMatchesJsonSnapshot($data);
 
-            $this->assertEquals('12345', $data['user_id']);
-            $this->assertEquals('john@example.org', $data['email']);
-
-            // Should return a json base64 encoded string
             return true;
         });
 
-        $user = new User();
-        $user->email = 'john@example.org';
-        $user->id = '12345';
-
         $event = (new UserLoginLogEvent())
-            ->withActor($user)
+            ->withActor(new StubUser())
             ->withData(['foo' => 'bar'])
             ->withPiiData(['bar' => 'baz']);
 
-        $service = new PsrLogger($mockLogger, true, $publicKey2, $privateKey1);
+        $service = new PsrLogger($encryptionHandler, $mockLogger, logPiiData: true);
         $service->log($event);
     }
 }

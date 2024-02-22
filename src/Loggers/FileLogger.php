@@ -7,14 +7,17 @@ namespace MinVWS\AuditLogger\Loggers;
 use MinVWS\AuditLogger\EncryptionHandler;
 use MinVWS\AuditLogger\Events\Logging\GeneralLogEvent;
 
-class FileLogger implements LoggerInterface
+final class FileLogger implements LoggerInterface
 {
     protected string $auditLogFilePath;
     protected bool $logPiiData;
-    protected ?EncryptionHandler $encryptionHandler;
+    protected EncryptionHandler $encryptionHandler;
 
-    public function __construct(EncryptionHandler $encryptionHandler, string $auditLogFilePath, bool $logPiiData = false)
-    {
+    public function __construct(
+        EncryptionHandler $encryptionHandler,
+        string $auditLogFilePath,
+        bool $logPiiData = false,
+    ) {
         $this->encryptionHandler = $encryptionHandler;
         $this->auditLogFilePath = $auditLogFilePath;
         $this->logPiiData = $logPiiData;

@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace MinVWS\AuditLogger\Tests\Events\Logging;
 
 use MinVWS\AuditLogger\Events\Logging\AdminPasswordResetLogEvent;
-use PHPUnit\Framework\TestCase;
+use MinVWS\AuditLogger\Tests\TestCase;
 
-class AdminPasswordResetLogEventTest extends TestCase
+final class AdminPasswordResetLogEventTest extends TestCase
 {
-    public function testEvent()
+    public function testEvent(): void
     {
-        $event = new AdminPasswordResetLogEvent(null, null, [], [], '', false, false, '');
+        $event = new AdminPasswordResetLogEvent();
 
-        $this->assertEquals(AdminPasswordResetLogEvent::EVENT_KEY, $event->getEventKey());
-        $this->assertEquals(AdminPasswordResetLogEvent::EVENT_CODE, $event->getEventCode());
+        self::assertEquals(AdminPasswordResetLogEvent::EVENT_KEY, $event->getEventKey());
+        self::assertEquals(AdminPasswordResetLogEvent::EVENT_CODE, $event->getEventCode());
     }
 }

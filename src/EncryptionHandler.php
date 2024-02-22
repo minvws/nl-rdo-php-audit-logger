@@ -4,21 +4,35 @@ declare(strict_types=1);
 
 namespace MinVWS\AuditLogger;
 
-class EncryptionHandler
+use RuntimeException;
+use SensitiveParameter;
+
+final class EncryptionHandler
 {
-    protected bool $enabled;
     protected string $publicKey;
     protected string $privateKey;
 
-    public function __construct(bool $enabled, string $publicKey, #[\SensitiveParameter] string $privateKey)
-    {
+    public function __construct(
+        protected bool $enabled,
+        string $publicKey,
+        #[SensitiveParameter]
+        string $privateKey,
+    ) {
         if (! function_exists('sodium_crypto_box')) {
-            throw new \Exception('libsodium cound not found. Please install libsodium or do not use encryption in the audit_logger');
+            throw new \Exception(
+                'libsodium cound not found. Please install libsodium or do not use encryption in the audit_logger',
+            );
         }
 
-        $this->enabled = $enabled;
-        $this->publicKey = base64_decode($publicKey);
-        $this->privateKey = base64_decode($privateKey);
+        $publicKey = base64_decode($publicKey, true);
+        $privateKey = base64_decode($privateKey, true);
+
+        if ($publicKey === false || $privateKey === false) {
+            throw new RuntimeException('Invalid public or private key given');
+        }
+
+        $this->publicKey = $publicKey;
+        $this->privateKey = $privateKey;
     }
 
     public function isEnabled(): bool
@@ -26,10 +40,8 @@ class EncryptionHandler
         return $this->enabled;
     }
 
-    public function encrypt(mixed $data): string
+    public function encrypt(string $data): string
     {
-        $data = json_encode($data, JSON_THROW_ON_ERROR);
-
         $pair = sodium_crypto_box_keypair_from_secretkey_and_publickey($this->privateKey, $this->publicKey);
         $nonce = random_bytes(SODIUM_CRYPTO_BOX_NONCEBYTES);
         $encrypted = sodium_crypto_box($data, $nonce, $pair);

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace MinVWS\AuditLogger\Tests\Events\Logging;
 
 use MinVWS\AuditLogger\Events\Logging\RegistrationLogEvent;
-use PHPUnit\Framework\TestCase;
+use MinVWS\AuditLogger\Tests\TestCase;
 
-class GeneralLogEventTest extends TestCase
+final class GeneralLogEventTest extends TestCase
 {
-    public function testEvent()
+    public function testEvent(): void
     {
         $data = [
             'field_1' => 12,
@@ -45,6 +45,6 @@ class GeneralLogEventTest extends TestCase
                 'name' => 'billy',
             ],
         ];
-        $this->assertEquals($result, $event->getMergedPiiData()['request']);
+        self::assertEquals($result, $event->getMergedPiiData()['request']);
     }
 }

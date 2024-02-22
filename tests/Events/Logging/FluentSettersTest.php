@@ -6,50 +6,50 @@ namespace MinVWS\AuditLogger\Tests\Events\Logging;
 
 use MinVWS\AuditLogger\Contracts\LoggableUser;
 use MinVWS\AuditLogger\Events\Logging\AdminPasswordResetLogEvent;
-use PHPUnit\Framework\TestCase;
+use MinVWS\AuditLogger\Tests\TestCase;
+use Mockery;
 
-class FluentSettersTest extends TestCase
+final class FluentSettersTest extends TestCase
 {
-    public function testFluentSetters()
+    public function testFluentSetters(): void
     {
-        $actor = \Mockery::mock(LoggableUser::class);
-        $actor->expects('getId')->andReturns('1234')->zeroOrMoreTimes();
+        $actor = Mockery::mock(LoggableUser::class);
+        $actor->shouldReceive('getAuditId')->andReturn('1234');
 
         $event = (new AdminPasswordResetLogEvent())
             ->asCreate()
             ->withActor($actor)
             ->withData(['foo' => 'bar'])
             ->withSource('source')
-            ->withFailed(true, 'reason')
-        ;
+            ->withFailed(true, 'reason');
 
         $data = $event->getLogData();
-        $this->assertEquals('C', $data['action_code']);
-        $this->assertEquals('1234', $data['user_id']);
-        $this->assertEquals(['foo' => 'bar'], $data['request']);
-        $this->assertTrue($data['failed']);
-        $this->assertEquals('reason', $data['failed_reason']);
-        $this->assertEquals('090005', $event->getEventCode());
-        $this->assertEquals('admin_password_reset', $event->getEventKey());
+        self::assertEquals('C', $data['action_code']);
+        self::assertEquals('1234', $data['user_id']);
+        self::assertEquals(['foo' => 'bar'], $data['request']);
+        self::assertTrue($data['failed']);
+        self::assertEquals('reason', $data['failed_reason']);
+        self::assertEquals('090005', $event->getEventCode());
+        self::assertEquals('admin_password_reset', $event->getEventKey());
 
         $event = $event->asDelete();
         $data = $event->getLogData();
-        $this->assertEquals('D', $data['action_code']);
-        $this->assertEquals('1234', $data['user_id']);
-        $this->assertEquals(['foo' => 'bar'], $data['request']);
-        $this->assertTrue($data['failed']);
-        $this->assertEquals('reason', $data['failed_reason']);
-        $this->assertEquals('090005', $event->getEventCode());
-        $this->assertEquals('admin_password_reset', $event->getEventKey());
+        self::assertEquals('D', $data['action_code']);
+        self::assertEquals('1234', $data['user_id']);
+        self::assertEquals(['foo' => 'bar'], $data['request']);
+        self::assertTrue($data['failed']);
+        self::assertEquals('reason', $data['failed_reason']);
+        self::assertEquals('090005', $event->getEventCode());
+        self::assertEquals('admin_password_reset', $event->getEventKey());
 
         $event = $event->withData(['a', 'b']);
         $data = $event->getLogData();
-        $this->assertEquals('D', $data['action_code']);
-        $this->assertEquals('1234', $data['user_id']);
-        $this->assertEquals(['a', 'b'], $data['request']);
-        $this->assertTrue($data['failed']);
-        $this->assertEquals('reason', $data['failed_reason']);
-        $this->assertEquals('090005', $event->getEventCode());
-        $this->assertEquals('admin_password_reset', $event->getEventKey());
+        self::assertEquals('D', $data['action_code']);
+        self::assertEquals('1234', $data['user_id']);
+        self::assertEquals(['a', 'b'], $data['request']);
+        self::assertTrue($data['failed']);
+        self::assertEquals('reason', $data['failed_reason']);
+        self::assertEquals('090005', $event->getEventCode());
+        self::assertEquals('admin_password_reset', $event->getEventKey());
     }
 }

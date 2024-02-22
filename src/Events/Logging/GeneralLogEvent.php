@@ -4,10 +4,34 @@ declare(strict_types=1);
 
 namespace MinVWS\AuditLogger\Events\Logging;
 
-use Illuminate\Http\Request;
+use Carbon\CarbonImmutable;
 use MinVWS\AuditLogger\Contracts\LoggableUser;
 use MinVWS\AuditLogger\Loggers\LogEventInterface;
+use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @phpstan-type LogData array{
+ *   user_id: ?string,
+ *   request: array<mixed>,
+ *   created_at: CarbonImmutable,
+ *   event_code: string,
+ *   action_code: string,
+ *   allowed_admin_view: bool,
+ *   failed: bool,
+ *   failed_reason: ?string,
+ * }
+ *
+ * @phpstan-type PiiLogDataMin array{
+ *   request: array<mixed>,
+ *   email:?string
+ * }
+ * @phpstan-type PiiLogDataFull array{
+ *   http_request: array<mixed>,
+ *   name: ?string,
+ *   roles: ?array<array-key,string>
+ * }
+ * @phpstan-type PiiLogData PiiLogDataMin|PiiLogDataFull
+ */
 abstract class GeneralLogEvent implements LogEventInterface
 {
     public const AC_CREATE = 'C';
@@ -25,7 +49,10 @@ abstract class GeneralLogEvent implements LogEventInterface
     // Fields
     public ?LoggableUser $actor = null;
     public ?LoggableUser $target = null;
+
+    /** @var array<mixed> */
     public array $data = [];
+    /** @var array<mixed> */
     public array $piiData = [];
     public string $eventCode = self::EVENT_CODE;
     public string $eventKey = self::EVENT_KEY;
@@ -56,6 +83,9 @@ abstract class GeneralLogEvent implements LogEventInterface
         return $this;
     }
 
+    /**
+     * @param array<mixed> $data
+     */
     public function withData(array $data = []): self
     {
         $this->data = $data;
@@ -63,6 +93,9 @@ abstract class GeneralLogEvent implements LogEventInterface
         return $this;
     }
 
+    /**
+     * @param array<mixed> $piiData
+     */
     public function withPiiData(array $piiData = []): self
     {
         $this->piiData = $piiData;
@@ -141,12 +174,16 @@ abstract class GeneralLogEvent implements LogEventInterface
         return $this;
     }
 
+    /**
+     * @return array<string,null|string|CarbonImmutable|bool>
+     * @phpstan-return LogData
+     */
     public function getLogData(): array
     {
         return [
             'user_id' => $this->actor?->getAuditId(),
             'request' => $this->data,
-            'created_at' => new \DateTimeImmutable(),
+            'created_at' => CarbonImmutable::now(),
             'event_code' => $this->eventCode,
             'action_code' => $this->actionCode[0],
             'allowed_admin_view' => $this->allowedAdminView,
@@ -155,12 +192,16 @@ abstract class GeneralLogEvent implements LogEventInterface
         ];
     }
 
+    /**
+     * @return array<string,mixed>
+     * @phpstan-return PiiLogData
+     */
     public function getPiiLogData(): array
     {
         $data = $this->piiData;
 
         if ($this->logFullRequest) {
-            $httpRequest = Request::capture();
+            $httpRequest = $this->captureRequest();
 
             $data['http_request'] = $httpRequest->request->all();
             $data['name'] = $this->actor?->getName();
@@ -180,6 +221,9 @@ abstract class GeneralLogEvent implements LogEventInterface
         ];
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function getMergedPiiData(): array
     {
         return array_merge_recursive($this->getLogData(), $this->getPiiLogData());
@@ -203,5 +247,12 @@ abstract class GeneralLogEvent implements LogEventInterface
     public function getTargetUser(): ?LoggableUser
     {
         return $this->target;
+    }
+
+    private function captureRequest(): Request
+    {
+        Request::enableHttpMethodParameterOverride();
+
+        return Request::createFromGlobals();
     }
 }
