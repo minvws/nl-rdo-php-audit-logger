@@ -186,6 +186,7 @@ abstract class GeneralLogEvent implements LogEventInterface
             'created_at' => CarbonImmutable::now(),
             'event_code' => $this->eventCode,
             'action_code' => $this->actionCode[0],
+            'source' => $this->source,
             'allowed_admin_view' => $this->allowedAdminView,
             'failed' => $this->failed,
             'failed_reason' => $this->failedReason,
@@ -208,17 +209,27 @@ abstract class GeneralLogEvent implements LogEventInterface
             $data['roles'] = $this->actor?->getRoles();
 
             // Remove private fields from the request data, if found
-            foreach (self::PRIVATE_FIELDS as $field) {
-                if (isset($data['http_request'][$field])) {
-                    $data['http_request'][$field] = '***';
-                }
-            }
+            $this->scrubPiiData($data);
         }
 
         return [
             'request' => $data,
             'email' => $this->actor?->getEmail(),
         ];
+    }
+
+    /**
+     * Remove private fields from the request data, if found
+     *
+     * @param array<string,mixed> $data
+     */
+    public function scrubPiiData(array &$data): void
+    {
+        foreach (self::PRIVATE_FIELDS as $field) {
+            if (isset($data['http_request'][$field])) {
+                $data['http_request'][$field] = '***';
+            }
+        }
     }
 
     /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MinVWS\AuditLogger;
+namespace MinVWS\AuditLogger\Handlers;
 
 use RuntimeException;
 use SensitiveParameter;

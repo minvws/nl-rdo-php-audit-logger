@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace MinVWS\AuditLogger\Loggers;
 
-use MinVWS\AuditLogger\EncryptionHandler;
 use MinVWS\AuditLogger\Events\Logging\GeneralLogEvent;
+use MinVWS\AuditLogger\Handlers\EncryptionHandler;
 
 final class FileLogger implements LoggerInterface
 {
