@@ -59,7 +59,7 @@ abstract class GeneralLogEvent implements LogEventInterface
     public string $actionCode = self::AC_EXECUTE;
     public bool $allowedAdminView = false;
     public bool $failed = false;
-    public string $source = '';
+    public ?string $source = null;
     public ?string $failedReason = null;
     public bool $logFullRequest = false;
 
