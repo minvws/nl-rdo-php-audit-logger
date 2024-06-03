@@ -204,12 +204,9 @@ abstract class GeneralLogEvent implements LogEventInterface
         if ($this->logFullRequest) {
             $httpRequest = $this->captureRequest();
 
-            $data['http_request'] = $httpRequest->request->all();
+            $data['http_request'] = $this->scrubPiiData($httpRequest->request->all());
             $data['name'] = $this->actor?->getName();
             $data['roles'] = $this->actor?->getRoles();
-
-            // Remove private fields from the request data, if found
-            $this->scrubPiiData($data);
         }
 
         return [
@@ -222,14 +219,18 @@ abstract class GeneralLogEvent implements LogEventInterface
      * Remove private fields from the request data, if found
      *
      * @param array<string,mixed> $data
+     *
+     * @return array<string,mixed> $data
      */
-    public function scrubPiiData(array &$data): void
+    public function scrubPiiData(array $data): array
     {
         foreach (self::PRIVATE_FIELDS as $field) {
-            if (isset($data['http_request'][$field])) {
-                $data['http_request'][$field] = '***';
+            if (isset($data[$field])) {
+                $data[$field] = '***';
             }
         }
+
+        return $data;
     }
 
     /**
