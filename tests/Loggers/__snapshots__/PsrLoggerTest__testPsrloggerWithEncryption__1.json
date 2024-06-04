@@ -10,5 +10,6 @@
     "allowed_admin_view": false,
     "failed": false,
     "failed_reason": null,
-    "email": "john@example.org"
+    "email": "john@example.org",
+    "source": null
 }

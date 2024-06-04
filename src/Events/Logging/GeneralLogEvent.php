@@ -59,7 +59,7 @@ abstract class GeneralLogEvent implements LogEventInterface
     public string $actionCode = self::AC_EXECUTE;
     public bool $allowedAdminView = false;
     public bool $failed = false;
-    public string $source = '';
+    public ?string $source = null;
     public ?string $failedReason = null;
     public bool $logFullRequest = false;
 
@@ -186,6 +186,7 @@ abstract class GeneralLogEvent implements LogEventInterface
             'created_at' => CarbonImmutable::now(),
             'event_code' => $this->eventCode,
             'action_code' => $this->actionCode[0],
+            'source' => $this->source,
             'allowed_admin_view' => $this->allowedAdminView,
             'failed' => $this->failed,
             'failed_reason' => $this->failedReason,
@@ -203,22 +204,33 @@ abstract class GeneralLogEvent implements LogEventInterface
         if ($this->logFullRequest) {
             $httpRequest = $this->captureRequest();
 
-            $data['http_request'] = $httpRequest->request->all();
+            $data['http_request'] = $this->scrubPiiData($httpRequest->request->all());
             $data['name'] = $this->actor?->getName();
             $data['roles'] = $this->actor?->getRoles();
-
-            // Remove private fields from the request data, if found
-            foreach (self::PRIVATE_FIELDS as $field) {
-                if (isset($data['http_request'][$field])) {
-                    $data['http_request'][$field] = '***';
-                }
-            }
         }
 
         return [
             'request' => $data,
             'email' => $this->actor?->getEmail(),
         ];
+    }
+
+    /**
+     * Remove private fields from the request data, if found
+     *
+     * @param array<string,mixed> $data
+     *
+     * @return array<string,mixed> $data
+     */
+    public function scrubPiiData(array $data): array
+    {
+        foreach (self::PRIVATE_FIELDS as $field) {
+            if (isset($data[$field])) {
+                $data[$field] = '***';
+            }
+        }
+
+        return $data;
     }
 
     /**

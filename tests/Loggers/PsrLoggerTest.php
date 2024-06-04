@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace MinVWS\AuditLogger\Tests\Loggers;
 
 use Carbon\CarbonImmutable;
-use MinVWS\AuditLogger\EncryptionHandler;
 use MinVWS\AuditLogger\Events\Logging\UserLoginLogEvent;
+use MinVWS\AuditLogger\Handlers\EncryptionHandler;
 use MinVWS\AuditLogger\Loggers\PsrLogger;
 use MinVWS\AuditLogger\Tests\StubUser;
 use MinVWS\AuditLogger\Tests\TestCase;

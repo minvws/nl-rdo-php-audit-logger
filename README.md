@@ -43,6 +43,8 @@ composer require minvws/audit-logger
 With the PSRLogger you can log through any PSR compatible logger. This makes it easy to
 log to any destination like syslog, or monolog.
 
+##### Encryption
+
 Audit lines can optionally be encrypted so they can only be read by the application that
 has the private key.
 
@@ -60,7 +62,7 @@ echo "Private key: " . base64_encode($privkey) . "\n";
 #### Logging full request
 
 The option `log_full_request` can be used to log the full HTTP request. Any sensitive information
-like passsords, tokens etc should be stripped from the request. However, there is no guarantee that
+like passwords, tokens etc should be stripped from the request. However, there is no guarantee that
 all sensitive information will be stripped if the naming is different.
 
 However, this configuration option is NOT implemented. You MUST call `logFullRequest()` on the event
