@@ -1,4 +1,4 @@
-# nl-rdo-audit-logger
+# PHP Audit Logger (nl-rdo-audit-logger)
 
 This package provides a generic logging service for the RDO platform. It allows to easily
 log events to the database, syslog or other destinations.
@@ -13,6 +13,11 @@ This package is a generic module that isn't directly coupled to a framework, how
 are other packages that provide a framework specific implementation.
 
 ## Installation
+
+### Requirements
+
+- PHP >= 8.1
+- Composer
 
 ### Composer
 
@@ -166,3 +171,17 @@ Creating a custom event is easy. You can create a new class that extends the `Ge
   }
 
 ```
+
+## Usage in other frameworks
+This package is framework agnostic. However, there are other packages that provide a framework specific implementation.
+- Laravel: [minvws/nl-rdo-laravel-logging](https://github.com/minvws/nl-rdo-laravel-logging)
+- Symfony: [minvws/nl-rdo-php-audit-logger-bundle](https://github.com/minvws/nl-rdo-php-audit-logger-bundle)
+
+## Contributing
+If you encounter any issues or have suggestions for improvements, please feel free to open an issue or submit a pull request on the GitHub repository of this package.
+
+## License
+This package is open-source and released under the European Union Public License version 1.2. You are free to use, modify, and distribute the package in accordance with the terms of the license.
+
+## Part of iCore
+This package is part of the iCore project.
