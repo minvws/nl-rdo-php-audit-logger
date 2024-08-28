@@ -39,6 +39,28 @@ jobs:
         run: composer checkstyle
       - name: Execute tests (Unit and Feature)
         run: composer test-report
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        if: ${{ matrix.php == '8.3' &&  matrix.composer_flags == '' }}
+        with:
+          name: reports
+          path: |
+            report-phpunit.xml
+            coverage-phpunit.xml
+
+  sonar:
+    name: 'SonarCloud'
+    runs-on: ubuntu-22.04
+    needs: validate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download reports
+        uses: actions/download-artifact@v4
+        with:
+          name: reports
       - name: Run SonarCloud scanner
         uses: minvws/nl-irealisatie-generic-pipelines/.github/actions/sonarcloud@main
         with:
