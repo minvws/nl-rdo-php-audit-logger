@@ -40,7 +40,7 @@
         "lint": "XDEBUG_MODE=off phplint --exclude=vendor .",
         "checkstyle": "XDEBUG_MODE=off phpcs",
         "fixstyle": "XDEBUG_MODE=off phpcbf",
-        "checktype": "XDEBUG_MODE=off phpstan analyse",
+        "checktype": "XDEBUG_MODE=off phpstan analyse --error-format=prettyJson | tee reports/phpstan.json",
         "update-type-baseline": "XDEBUG_MODE=off phpstan --generate-baseline",
         "test": "XDEBUG_MODE=off phpunit -d --without-creating-snapshots",
         "test-report": "XDEBUG_MODE=coverage phpunit --log-junit=reports/report-phpunit.xml --coverage-text --coverage-clover=reports/coverage-phpunit.xml",
