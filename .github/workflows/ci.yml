@@ -38,7 +38,7 @@ jobs:
       - name: Coding style PSR12 Check
         run: composer checkstyle
       - name: Execute tests (Unit and Feature)
-        run: composer test
+        run: composer test-report
       - name: Run SonarCloud scanner
         uses: minvws/nl-irealisatie-generic-pipelines/.github/actions/sonarcloud@main
         with:
