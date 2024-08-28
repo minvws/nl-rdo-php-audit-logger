@@ -43,7 +43,7 @@
         "checktype": "XDEBUG_MODE=off phpstan analyse",
         "update-type-baseline": "XDEBUG_MODE=off phpstan --generate-baseline",
         "test": "XDEBUG_MODE=off phpunit -d --without-creating-snapshots",
-        "test-report": "XDEBUG_MODE=coverage phpunit --coverage-text --coverage-html coverage/html",
+        "test-report": "XDEBUG_MODE=coverage phpunit --log-junit=reports/report-phpunit.xml --coverage-text --coverage-clover=reports/coverage-phpunit.xml",
         "update-test-snapshots": "XDEBUG_MODE=off phpunit -d --update-snapshots",
         "checkall": [
             "@lint",
