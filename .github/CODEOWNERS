@@ -1,1 +1,3 @@
-* @minvws/rdo-woo-codeowners
+* @minvws/icore-codeowners-auditlogger
+# Last match takes precedence
+.github/CODEOWNERS @minvws/irealisatie-operations
