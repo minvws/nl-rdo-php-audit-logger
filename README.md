@@ -6,7 +6,7 @@ log events to the database, syslog or other destinations.
 Log events can be logged with or without PII data. PII data is data that can be used
 to identify a person. Depending on the logging destination, it can send the PII data or not.
 
-Data can be automatically encrypted with a pub/priv keypair so that logging can be
+Data can be automatically encrypted with a public/private keypair so that logging can be
 written, but not directly read.
 
 This package is a generic module that isn't directly coupled to a framework, however, there
