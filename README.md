@@ -21,21 +21,7 @@ are other packages that provide a framework specific implementation.
 
 ### Composer
 
-Install the package through composer. Since this is currently a private package, you must
-enable the repository in your `composer.json` file:
-
-```json
-{
-    "repositories": {
-        "minvws/audit-logger": {
-            "type": "vcs",
-            "url": "git@github.com:minvws/nl-rdo-php-audit-logger.git"
-        }
-    }
-}
-```
-
-After that, you can install the package:
+You can install the package via the composer package manager:
 
 ```bash
 composer require minvws/audit-logger
