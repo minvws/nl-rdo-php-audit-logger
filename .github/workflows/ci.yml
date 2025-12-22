@@ -65,3 +65,4 @@ jobs:
         uses: minvws/action-sonarqube@v1
         with:
           sonar-token: ${{ secrets.SONAR_TOKEN }}
+          allow-run-on-dependabot: 'true'
