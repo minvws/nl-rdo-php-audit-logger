@@ -33,7 +33,10 @@ jobs:
           extensions: xdebug, zip
       - name: Install dependencies
         run: composer update --prefer-dist --no-interaction $COMPOSER_FLAGS
+      - name: Static analysis with PHPStan (human readable)
+        run: composer checktype
       - name: Static analysis with PHPStan
+        if: always()
         run: composer checktype-ci
       - name: Coding style PSR12 Check
         run: composer checkstyle
