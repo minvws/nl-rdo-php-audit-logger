@@ -16,7 +16,7 @@ are other packages that provide a framework specific implementation.
 
 ### Requirements
 
-- PHP >= 8.1
+- PHP >= 8.3
 - Composer
 
 ### Composer
