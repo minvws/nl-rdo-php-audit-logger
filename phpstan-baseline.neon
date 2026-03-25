@@ -1,0 +1,37 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method MinVWS\\AuditLogger\\Events\\Logging\\GeneralLogEvent\:\:getMergedPiiData\(\) should return array\<string, mixed\> but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Events/Logging/GeneralLogEvent.php
+
+		-
+			message: '#^Property MinVWS\\AuditLogger\\Events\\Logging\\GeneralLogEvent\:\:\$eventCode \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Events/Logging/GeneralLogEvent.php
+
+		-
+			message: '#^Property MinVWS\\AuditLogger\\Events\\Logging\\GeneralLogEvent\:\:\$eventKey \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Events/Logging/GeneralLogEvent.php
+
+		-
+			message: '#^Cannot call method andReturn\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: tests/Loggers/PsrLoggerTest.php
+
+		-
+			message: '#^Parameter \#2 \$string of function explode expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: tests/Loggers/PsrLoggerTest.php
+
+		-
+			message: '#^Parameter \#2 \$string of static method PHPUnit\\Framework\\Assert\:\:assertStringStartsWith\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: tests/Loggers/PsrLoggerTest.php

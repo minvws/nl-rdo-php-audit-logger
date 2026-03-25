@@ -34,11 +34,11 @@ jobs:
       - name: Install dependencies
         run: composer update --prefer-dist --no-interaction $COMPOSER_FLAGS
       - name: Static analysis with PHPStan
-        run: composer checktype
+        run: composer checktype-ci
       - name: Coding style PSR12 Check
         run: composer checkstyle
       - name: Execute tests (Unit and Feature)
-        run: composer test-report
+        run: composer test-report-ci
       - name: Upload reports
         uses: actions/upload-artifact@v4
         if: ${{ matrix.php == '8.4' &&  matrix.composer_flags == '' }}
