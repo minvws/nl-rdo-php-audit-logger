@@ -7,7 +7,7 @@ namespace MinVWS\AuditLogger;
 use MinVWS\AuditLogger\Loggers\LogEventInterface;
 use MinVWS\AuditLogger\Loggers\LoggerInterface;
 
-final class AuditLogger
+final class AuditLogger implements AuditLoggerInterface
 {
     /**
      * @param array<LoggerInterface> $loggers
@@ -16,17 +16,11 @@ final class AuditLogger
     {
     }
 
-    /**
-     * Adds an extra logger adapter to the service. Does not check if the same logger is already present.
-     */
     public function addLogger(LoggerInterface $logger): void
     {
         $this->loggers[] = $logger;
     }
 
-    /**
-     * Logs the given event to the connected logger adapters.
-     */
     public function log(LogEventInterface $event): void
     {
         foreach ($this->loggers as $logger) {
