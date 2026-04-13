@@ -7,7 +7,7 @@ namespace MinVWS\AuditLogger;
 use MinVWS\AuditLogger\Loggers\LogEventInterface;
 use MinVWS\AuditLogger\Loggers\LoggerInterface;
 
-final class AuditLogger
+final class AuditLogger implements AuditLoggerInterface
 {
     /**
      * @param array<LoggerInterface> $loggers
