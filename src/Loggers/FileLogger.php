@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MinVWS\AuditLogger\Loggers;
 
 use MinVWS\AuditLogger\Events\Logging\GeneralLogEvent;
+use MinVWS\AuditLogger\Exception\AuditLoggerException;
 use MinVWS\AuditLogger\Handlers\EncryptionHandler;
 
 final class FileLogger implements LoggerInterface
@@ -30,6 +31,11 @@ final class FileLogger implements LoggerInterface
         if ($this->encryptionHandler->isEnabled()) {
             $data = $this->encryptionHandler->encrypt($data);
             $data = json_encode(['encrypted' => $data], JSON_THROW_ON_ERROR);
+        }
+
+        $auditLogDirectory = dirname($this->auditLogFilePath);
+        if (!is_dir($auditLogDirectory) && !\mkdir($auditLogDirectory, 0775, true) && !is_dir($auditLogDirectory)) {
+            throw new AuditLoggerException('Failed to create audit-log directory');
         }
 
         file_put_contents($this->auditLogFilePath, $data . "\n", FILE_APPEND);
